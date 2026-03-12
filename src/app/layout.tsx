@@ -1,19 +1,35 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google"; // <-- Changed this
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
+
+export const metadata: Metadata = {
+  title: "Pathshala - Digital Library",
+  description: "The Self Study Digital Library",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Pathshala",
+  },
+  formatDetection: {
+    telephone: false,
+  }
+};
+
+export const viewport: Viewport = {
+  themeColor: "#4f46e5",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevents pinch-to-zoom (crucial for native app feel)
+};
 // <-- Configured the new font
 const plusJakarta = Plus_Jakarta_Sans({ 
   subsets: ["latin"],
   variable: '--font-plus-jakarta',
 });
-
-export const metadata: Metadata = {
-  title: "Pathshala Digital Library",
-  description: "Self Study Centre & Exam Resources",
-  manifest: "/manifest.json",
-};
 
 export default function RootLayout({
   children,
