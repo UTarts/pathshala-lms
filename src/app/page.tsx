@@ -9,7 +9,7 @@ import MemberDashboard from '@/components/dashboard/MemberDashboard';
 import AdminDashboard from '@/components/dashboard/AdminDashboard';
 import ProfileSection from '@/components/ProfileSection';
 import { useRouter } from 'next/navigation';
-import { GraduationCap, Star, User, Lock, ArrowRight, Eye, QrCode, Loader2 } from 'lucide-react';
+import { GraduationCap, Star, User, Lock, ArrowRight, Eye, QrCode, Loader2, ExternalLink } from 'lucide-react';
 
 export default function Home() {
   const [user, setUser] = useLocalState<any>('pathshala_user', null);
@@ -66,109 +66,77 @@ export default function Home() {
     );
   }
 
-  // --- WELCOME / LOGIN VIEW ---
+  // --- MINIMAL, FIXED, APP-LIKE LOGIN SCREEN ---
   if (!user) {
     return (
-      <main className="flex-grow flex flex-col items-center justify-center relative w-full min-h-screen pt-20 pb-8 px-6 overflow-hidden bg-background-light dark:bg-background-dark">
-        {/* Top Bar for Login */}
-        <div className="absolute top-0 left-0 w-full z-10 p-4 flex items-center justify-between">
-          <div className="glass-card p-2 rounded-full shadow-sm flex items-center gap-2">
-            <div className="bg-primary/20 text-primary-dark p-2 rounded-full flex items-center justify-center">
-              <GraduationCap className="w-5 h-5" />
-            </div>
-            <span className="text-slate-900 dark:text-slate-100 font-bold text-sm pr-2">Pathshala</span>
-          </div>
-          <div className="flex gap-2">
+      <main className="h-[100dvh] w-full relative flex flex-col items-center overflow-hidden bg-background-light dark:bg-background-dark">
+        
+        {/* TOP RIGHT THEME TOGGLE */}
+        <div className="absolute top-5 right-5 z-20">
+          <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-lg rounded-full border border-slate-200/50 dark:border-slate-700/50 shadow-sm">
             <ThemeToggle />
           </div>
         </div>
 
-        {/* Decorative Background Blobs */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[30%] bg-primary/20 rounded-full blur-[80px]"></div>
-          <div className="absolute bottom-[20%] right-[-10%] w-[60%] h-[40%] bg-blue-200/30 rounded-full blur-[100px]"></div>
+        {/* LIGHTWEIGHT BACKGROUND BLOBS */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute -top-10 -left-10 w-48 h-48 bg-primary/10 rounded-full blur-[60px]"></div>
+          <div className="absolute bottom-[20%] right-[-10%] w-64 h-64 bg-blue-300/10 rounded-full blur-[80px]"></div>
         </div>
 
-        {/* Hero Illustration Area */}
-        <div className="w-full max-w-xs aspect-square mb-6 relative mt-10">
-          <div className="w-full h-full bg-gradient-to-tr from-primary/20 to-blue-300/20 rounded-full animate-[spin_10s_linear_infinite] absolute inset-0 blur-xl"></div>
-          <div className="w-full h-full flex items-center justify-center relative z-0 animate-[bounce_4s_ease-in-out_infinite]">
-             <BookIllustration />
-          </div>
+        {/* CENTER CONTENT */}
+        <div className="flex-1 w-full max-w-md flex flex-col justify-center items-center px-6 z-10 pt-10 pb-20 overflow-y-auto hide-scrollbar">
           
-          {/* Floating badge */}
-          <div className="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-3 rounded-xl shadow-lg flex items-center gap-3 animate-bounce" style={{animationDuration: '3s'}}>
-            <div className="bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded-full text-yellow-600 dark:text-yellow-400">
-              <Star className="w-4 h-4 fill-current" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Daily Streak</span>
-              <span className="text-sm font-bold text-slate-900 dark:text-slate-100">Ready!</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Card */}
-        <div className="w-full max-w-md mt-4 relative z-10">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-slate-50 leading-tight mb-3 tracking-tight">
-                Unlock Your <br/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-dark to-emerald-600">Learning World</span>
+          <div className="flex flex-col items-center mb-8 shrink-0">
+            <img src="/logo.webp" alt="Pathshala Logo" className="w-28 h-28 rounded-full object-cover shadow-xl border-4 border-white dark:border-slate-800 mb-5" />
+            <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-50 text-center tracking-tight">
+              Pathshala
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 text-base font-medium">
-                Your digital library for fun, discovery, and limitless knowledge.
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-semibold mt-1.5 text-center uppercase tracking-widest">
+              The Self Study Digital Library
             </p>
           </div>
 
-          {/* Login Form */}
-          <div className="glass-card rounded-[2rem] p-6 shadow-xl shadow-primary/5">
+          {/* COMPACT LOGIN FORM */}
+          <div className="w-full glass-card rounded-[2rem] p-6 shadow-xl shadow-primary/5 shrink-0">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6 text-center">Login</h2>
+            
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <User className="w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
                 </div>
-                <input name="email" type="email" required placeholder="Student Email" className="w-full bg-white dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-base rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary block pl-12 p-4 transition-all placeholder:text-slate-400 font-medium outline-none" />
+                <input name="email" type="email" required placeholder="Email Address" className="w-full bg-white dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-base rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-12 p-4 transition-all placeholder:text-slate-400 font-medium outline-none" />
               </div>
               
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Lock className="w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
                 </div>
-                <input name="password" type={showPassword ? "text" : "password"} required placeholder="Password" className="w-full bg-white dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-base rounded-xl focus:ring-4 focus:ring-primary/20 focus:border-primary block pl-12 p-4 transition-all placeholder:text-slate-400 font-medium outline-none" />
+                <input name="password" type={showPassword ? "text" : "password"} required placeholder="Password" className="w-full bg-white dark:bg-slate-800/50 border-2 border-slate-100 dark:border-slate-700 text-slate-900 dark:text-slate-100 text-base rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-12 p-4 transition-all placeholder:text-slate-400 font-medium outline-none" />
                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
                   <Eye className="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" />
                 </div>
               </div>
-
-              <div className="flex items-center justify-end mt-1">
-                <a href="#" className="text-sm font-semibold text-slate-500 hover:text-primary transition-colors">
-                    Forgot Password?
-                </a>
-              </div>
               
-              <button disabled={loading} type="submit" className="mt-2 w-full bg-primary hover:bg-primary-dark text-white text-lg font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/30 transform transition hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group">
-                  {loading ? 'Authenticating...' : 'Get Started'}
-                  {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+              <button disabled={loading} type="submit" className="mt-2 w-full bg-primary hover:bg-primary-dark text-white text-lg font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-transform flex items-center justify-center gap-2">
+                  {loading ? 'Authenticating...' : 'Sign In'}
+                  {!loading && <ArrowRight className="w-5 h-5" />}
               </button>
             </form>
-
-            <div className="mt-6 flex items-center gap-4">
-              <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
-              <span className="text-slate-400 dark:text-slate-500 text-sm font-medium">Or</span>
-              <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
-            </div>
-
-            <div className="mt-6 flex justify-center">
-              <button className="flex items-center justify-center gap-2 bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 py-3 px-6 rounded-xl transition-colors w-full active:scale-95">
-                <QrCode className="w-5 h-5 text-slate-900 dark:text-white" />
-                <span className="font-bold text-slate-700 dark:text-slate-300">Scan ID Card</span>
-              </button>
-            </div>
           </div>
+        </div>
 
-          <p className="text-center mt-8 text-slate-500 dark:text-slate-400 font-medium text-sm">
-            Admin Access? <span className="text-primary-dark dark:text-primary font-bold cursor-pointer" onClick={() => alert("Use your admin credentials above.")}>Login Here</span>
-          </p>
+        {/* FIXED FOOTER (UT ARTS BRANDING) */}
+        <div className="absolute bottom-0 left-0 w-full pb-6 pt-4 bg-gradient-to-t from-background-light dark:from-background-dark to-transparent z-20 flex justify-center pointer-events-none">
+          <span className="flex items-center justify-center gap-1.5 text-[11px] font-medium text-slate-500 pointer-events-auto">
+            Designed & Developed by
+            <a href="https://www.utarts.in" target="_blank" rel="noopener noreferrer" className="font-bold text-blue-600 hover:text-blue-500 transition-colors flex items-center gap-1.5 bg-white/50 dark:bg-slate-800/50 px-2.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm backdrop-blur-sm">
+              <img src="https://www.utarts.in/images/UTArt_Logo.webp" alt="UT Arts Logo" className="h-4 w-4 rounded-full object-cover" />
+              UT Arts
+              <ExternalLink size={10} className="ml-0.5" />
+            </a>
+          </span>
         </div>
       </main>
     );

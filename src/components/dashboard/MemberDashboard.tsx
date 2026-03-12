@@ -4,12 +4,14 @@ import { Bell, Flame, Star, Flag, ArrowRight, Library, FileQuestion, Megaphone, 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { ThemeToggle } from '@/components/ui/ThemeToggle'; // Added Theme Toggle
+import NotificationSidebar from '@/components/NotificationSidebar';
 
 export default function MemberDashboard({ user }: { user: any }) {
   const router = useRouter();
   const [totalPoints, setTotalPoints] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [recentNotices, setRecentNotices] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     // Fetch total points for the user
@@ -21,7 +23,12 @@ export default function MemberDashboard({ user }: { user: any }) {
         setTotalPoints(points);
       }
     };
-    
+    // Fetch Unread Notification Count
+    const fetchUnread = async () => {
+      const { count } = await supabase.from('app_notifications').select('*', { count: 'exact', head: true }).eq('user_id', user.id).eq('is_read', false);
+      if (count !== null) setUnreadCount(count);
+    };
+    fetchUnread();
     // Fetch top 3 latest notices for the sidebar
     const fetchNotices = async () => {
       const { data } = await supabase.from('notices').select('*').order('created_at', { ascending: false }).limit(3);
@@ -40,21 +47,24 @@ export default function MemberDashboard({ user }: { user: any }) {
   return (
     <div className="flex-1 w-full flex flex-col pb-32 bg-slate-50 dark:bg-slate-900 relative">
       
-      {/* Custom Integrated Header with Theme Toggle */}
+      {/* Custom Integrated Header */}
       <div className="pt-6 px-6 flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          <img src="/logo.webp" alt="Pathshala" className="w-10 h-10 rounded-full border-2 border-slate-100 dark:border-slate-800 object-cover shadow-sm" />
           <h1 className="text-2xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
             Pathshala
           </h1>
         </div>
-        <button 
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button 
           onClick={() => setShowNotifications(true)} 
           className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all text-slate-700 dark:text-slate-200 relative"
         >
           <Bell className="w-5 h-5" />
-          <span className="absolute top-2.5 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse ring-2 ring-white dark:ring-slate-800"></span>
+          {unreadCount > 0 && <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse ring-2 ring-white dark:ring-slate-800"></span>}
         </button>
+        </div>
       </div>
 
       <main className="px-5 w-full max-w-md mx-auto flex flex-col gap-6">
@@ -272,87 +282,7 @@ export default function MemberDashboard({ user }: { user: any }) {
         </div>
       </main>
 
-      {/* --- NOTIFICATION DRAWER / SLIDE-IN SIDEBAR --- */}
-      {showNotifications && (
-        <div 
-          className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm transition-opacity" 
-          onClick={() => setShowNotifications(false)}
-        >
-          <div 
-            className="absolute top-0 right-0 w-[85vw] max-w-sm h-full bg-white dark:bg-slate-900 shadow-2xl animate-in slide-in-from-right duration-300 p-6 flex flex-col border-l border-slate-200 dark:border-slate-800"
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
-          >
-            {/* Drawer Header */}
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Bell className="text-primary w-5 h-5" /> Notifications
-              </h2>
-              <button 
-                onClick={() => setShowNotifications(false)} 
-                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* Drawer Scrollable Content */}
-            <div className="flex-1 overflow-y-auto hide-scrollbar space-y-6">
-               
-               {/* Firebase Alert Placeholder */}
-               <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-5 rounded-2xl border border-indigo-100 dark:border-indigo-800/50 shadow-sm relative overflow-hidden">
-                  <div className="absolute -right-4 -top-4 w-16 h-16 bg-indigo-500/10 rounded-full blur-xl"></div>
-                  <div className="flex items-center gap-3 mb-2">
-                     <div className="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center shadow-md">
-                       <Bell size={14} className="animate-bounce" />
-                     </div>
-                     <h3 className="font-bold text-indigo-900 dark:text-indigo-300">Live Alerts</h3>
-                  </div>
-                  <p className="text-xs text-indigo-700 dark:text-indigo-400 font-medium">Real-time push notifications via Firebase will appear here shortly.</p>
-               </div>
-
-               {/* Latest Admin Notices */}
-               <div>
-                 <h3 className="font-bold text-slate-400 uppercase tracking-wider text-xs mb-3 flex items-center justify-between">
-                   Latest Notices
-                   <span className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded text-[10px]">{recentNotices.length} New</span>
-                 </h3>
-                 
-                 <div className="space-y-3">
-                   {recentNotices.length > 0 ? recentNotices.map((n) => (
-                     <div 
-                        key={n.id} 
-                        className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 cursor-pointer hover:border-primary dark:hover:border-primary transition-colors shadow-sm" 
-                        onClick={() => { setShowNotifications(false); router.push('/notices'); }}
-                      >
-                        <div className="flex justify-between items-start mb-2">
-                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${n.type === 'exam' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'}`}>
-                             {n.type === 'exam' ? 'EXAM' : 'GENERAL'}
-                           </span>
-                           <span className="text-[10px] font-semibold text-slate-400">{new Date(n.created_at).toLocaleDateString()}</span>
-                        </div>
-                        <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200 line-clamp-1 mb-1">{n.title}</h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{n.content}</p>
-                     </div>
-                   )) : (
-                     <p className="text-sm font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl text-center py-6 border border-dashed border-slate-200 dark:border-slate-700">No recent notices published.</p>
-                   )}
-                 </div>
-               </div>
-
-            </div>
-            
-            {/* Drawer Footer */}
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 mt-auto">
-              <button 
-                onClick={() => { setShowNotifications(false); router.push('/notices'); }} 
-                className="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors flex items-center justify-center gap-2"
-              >
-                 Open Notice Board <ArrowRight size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <NotificationSidebar isOpen={showNotifications} onClose={() => setShowNotifications(false)} user={user} />
     </div>
   );
 }

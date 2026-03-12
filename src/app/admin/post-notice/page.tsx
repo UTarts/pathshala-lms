@@ -34,7 +34,7 @@ export default function PostNoticePage() {
       }
     }
 
-    // Insert into Database
+    // 1. Insert Notice into Database
     const { error } = await supabase.from('notices').insert({
       title,
       content,
@@ -42,14 +42,28 @@ export default function PostNoticePage() {
       file_url
     });
 
-    setIsSubmitting(false);
-
-    if (!error) {
-      setSuccess(true);
-      setTimeout(() => router.back(), 2000);
-    } else {
+    if (error) {
       alert("Failed to post notice.");
+      setIsSubmitting(false);
+      return;
     }
+
+    // 2. Blast Push Notifications to all Students!
+    const { data: students } = await supabase.from('profiles').select('id').eq('role', 'student');
+    if (students && students.length > 0) {
+      const notifications = students.map(s => ({
+        user_id: s.id,
+        title: title,
+        message: content.substring(0, 80) + '...', // Shorten for the preview
+        type: type
+      }));
+      // Insert in bulk
+      await supabase.from('app_notifications').insert(notifications);
+    }
+
+    setIsSubmitting(false);
+    setSuccess(true);
+    setTimeout(() => router.back(), 2000);
   };
 
   if (success) {

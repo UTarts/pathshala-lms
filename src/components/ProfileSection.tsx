@@ -116,7 +116,9 @@ export default function ProfileSection({ user, onProfileUpdate }: { user: any, o
           <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Settings & Config</h1>
           <div className="flex items-center gap-3">
              <ThemeToggle />
-             <button onClick={() => setShowLogoutModal(true)} className="p-2.5 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full hover:bg-red-100 transition-colors shadow-sm"><LogOut size={20} /></button>
+             <button onClick={() => router.push('/settings')} className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">
+               <Settings size={20} />
+             </button>
           </div>
         </div>
         
@@ -172,7 +174,12 @@ export default function ProfileSection({ user, onProfileUpdate }: { user: any, o
     <div className="flex-1 w-full max-w-md mx-auto flex flex-col gap-6 pt-6 pb-28 overflow-x-hidden relative font-display">
       <div className="flex items-center justify-between px-5">
         <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Digital ID</h1>
-        <div className="flex items-center gap-3"><ThemeToggle /><button onClick={() => setShowLogoutModal(true)} className="p-2.5 bg-red-50 dark:bg-red-500/10 text-red-500 rounded-full hover:bg-red-100"><LogOut size={20} /></button></div>
+        <div className="flex items-center gap-3">
+           <ThemeToggle />
+           <button onClick={() => router.push('/settings')} className="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors shadow-sm">
+             <Settings size={20} />
+           </button>
+        </div>
       </div>
 
       <div className="px-5 w-full space-y-6">
@@ -332,10 +339,6 @@ export default function ProfileSection({ user, onProfileUpdate }: { user: any, o
           </div>
         </div>
       </div>
-      
-      {showLogoutModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm px-4"><div className="bg-white dark:bg-slate-900 rounded-[2rem] p-6 w-full max-w-sm shadow-2xl text-center"><LogOut size={28} className="mx-auto text-red-500 mb-2"/><h3 className="text-xl font-black mb-4">Sign Out?</h3><div className="flex gap-3"><button onClick={() => setShowLogoutModal(false)} className="flex-1 py-3 rounded-xl font-bold bg-slate-100">Cancel</button><button onClick={confirmLogout} className="flex-1 py-3 rounded-xl font-bold bg-red-500 text-white">Sign Out</button></div></div></div>
-      )}
     </div>
   );
 }

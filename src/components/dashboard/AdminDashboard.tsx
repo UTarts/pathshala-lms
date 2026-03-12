@@ -53,15 +53,18 @@ export default function AdminDashboard({ user }: { user: any }) {
       {/* Pathshala Header */}
       <div className="pt-6 px-6 flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <ThemeToggle />
+          <img src="/logo.webp" alt="Pathshala" className="w-10 h-10 rounded-full border-2 border-slate-100 dark:border-slate-800 object-cover shadow-sm" />
           <h1 className="text-2xl font-black tracking-tight bg-clip-text  bg-gradient-to-r from-primary-dark to-primary dark:from-emerald-400 dark:to-teal-400">
             Pathshala
           </h1>
         </div>
-        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all text-slate-700 dark:text-slate-200 relative">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-2.5 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse ring-2 ring-white dark:ring-slate-800"></span>
-        </button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button className="w-10 h-10 flex items-center justify-center rounded-full bg-white dark:bg-slate-800 shadow-sm hover:shadow-md transition-all text-slate-700 dark:text-slate-200 relative">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-2.5 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse ring-2 ring-white dark:ring-slate-800"></span>
+          </button>
+        </div>
       </div>
 
       <main className="px-5 w-full max-w-md mx-auto flex flex-col gap-6">
